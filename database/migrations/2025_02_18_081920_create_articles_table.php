@@ -17,7 +17,7 @@ class CreateArticlesTable extends Migration
             $table->id(); // Tạo khóa chính tự động tăng
             $table->string('title'); // Tiêu đề bài báo
             $table->string('url'); // Liên kết bài báo
-            $table->string('keywords'); // Từ khóa liên quan 
+            $table->text('keywords'); // Từ khóa liên quan 
             $table->timestamps(); // Thời gian tạo và cập nhật (created_at, updated_at)
         });
     }

@@ -19,7 +19,7 @@
     </div>
 
     <div class="mt-4">
-        {{ $articles->links() }} <!-- Phân trang -->
+        {{ $articles->links() }}
     </div>
 </div>
 @endsection

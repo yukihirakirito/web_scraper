@@ -65,8 +65,14 @@ class ESPNScraper implements ScraperInterface
                 }
             }
             DB::beginTransaction();
-            // Lưu các bài báo vào cơ sở dữ liệu
-            Article::insert($soccerArticles);
+            // Đẩy dữ liệu lên DB
+            foreach ($soccerArticles as $articleData) {
+                Article::create([
+                    'title' => $articleData['title'],
+                    'url' => $articleData['url'],
+                    'keywords' => json_encode((object)$articleData['keywords']),
+                ]);
+            }
             DB::commit();
             Log::info('Inserted ' . count($soccerArticles) . ' articles');
         } catch (\Throwable $th) {
@@ -95,15 +101,21 @@ class ESPNScraper implements ScraperInterface
 
     private function isSoccerArticleUrl(string $url, string  $keyword): bool
     {
-        // Chỉ chấp nhận các url từ page của ESPN, không lấy từ các phương tiện khác như tiktok, youtube, v.v.
-        if (strpos($url, $this->espn_url) === false) {
+        try {
+            // Chỉ chấp nhận các url từ page của ESPN, không lấy từ các phương tiện khác như tiktok, youtube, v.v.
+            if (strpos($url, $this->espn_url) === false) {
+                return false;
+            }
+            // Kiểm tra xem url có chứa từ khóa liên quan đến bóng đá
+            if (strpos($url, strtolower($keyword)) === false) {
+                return false;
+            }
+            return true;
+        } catch (\Throwable $th) {
+            Log::error($th);
             return false;
         }
-        // Kiểm tra xem url có chứa từ khóa liên quan đến bóng đá
-        if (strpos($url, strtolower($keyword)) === false) {
-            return false;
-        }
-        return true;
+
     }
 
     private function isSoccerArticleTitle(string $title, string $keyword): bool
