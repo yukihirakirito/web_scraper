@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ArticleController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Scraper\ESPNScraper;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/scrape-espn', function () {
-    $scraper = new ESPNScraper();
-    return response()->json($scraper->fetchArticles());
-});
 
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');

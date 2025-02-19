@@ -8,5 +8,5 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'url', 'keywords'];
+    protected $fillable = ['source', 'title', 'url', 'keywords'];
 }
