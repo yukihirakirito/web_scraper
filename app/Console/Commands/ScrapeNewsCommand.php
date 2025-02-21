@@ -3,36 +3,33 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Http\Scraper\ESPNScraper;
-use App\Http\Scraper\TheSunScraper;
-use App\Http\Scraper\MarcaScraper;
-use App\Http\Scraper\MundoDeportivoScraper;
-use App\Http\Scraper\NinetyMinutesScraper;
 use Illuminate\Support\Facades\Log;
+use App\Factories\ScraperFactory;
 
 class ScrapeNewsCommand extends Command
 {
     protected $signature = 'scrape:news';
     protected $description = 'Fetch latest football news from various sources';
 
+    protected array $sources = [
+        'espn',
+        'marca',
+        'thesun',
+        '90min',
+        'mundodeportivo',
+    ];
+
     public function handle()
     {
         Log::info('Starting news scraping...');
-        
-        $scrapers = [
-            new ESPNScraper(),
-            new MarcaScraper(),
-            new TheSunScraper(),
-            new NinetyMinutesScraper(),
-            new MundoDeportivoScraper(),
-        ];
 
-        foreach ($scrapers as $scraper) {
+        foreach ($this->sources as $source) {
             try {
+                $scraper = ScraperFactory::create($source);
                 $scraper->fetchArticles();
-                Log::info(get_class($scraper) . ' completed.');
+                Log::info("$source scraper completed.");
             } catch (\Throwable $th) {
-                Log::error('Error in ' . get_class($scraper) . ': ' . $th->getMessage());
+                Log::error("Error in $source scraper: " . $th->getMessage());
             }
         }
 
